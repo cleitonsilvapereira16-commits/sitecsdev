@@ -1,973 +1,903 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSDEV - Soluções Digitais, Analytics & Gestão</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            900: '#1e1b4b',
-                            dark: '#070a12'
-                        }
-                    }
-                }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSDev - Engenharia de Software, Automação &amp; Sistemas Sob Medida</title>
+  <meta name="description" content="Sistemas web sob medida, automações empresariais via APIs, integrações Supabase e soluções de Inteligência Artificial." />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a', 950: '#0f172a'
             }
+          },
+          animation: {
+            'pulse-fast': 'pulse 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'logo-pop': 'logoPop 0.8s ease-out forwards'
+          },
+          keyframes: {
+            logoPop: {
+              '0%': { transform: 'scale(0.8)', opacity: '0' },
+              '50%': { transform: 'scale(1.1)', opacity: '1' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            }
+          }
         }
-    </script>
-    <!-- Supabase JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- jsPDF CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Signature Pad CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
-    <!-- QRCode JS CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+      }
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+  </style>
 </head>
-<body class="bg-[#070a12] text-slate-100 antialiased font-sans selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-500 selection:text-white min-h-screen flex flex-col">
 
-    <!-- SPLASH SCREEN -->
-    <div id="splash-screen" class="fixed inset-0 z-[100] bg-[#070a12] flex flex-col items-center justify-center transition-opacity duration-700">
-        <div class="relative flex items-center justify-center">
-            <div class="w-20 h-20 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
-            <span class="absolute font-black text-xl tracking-wider text-white">CS</span>
+  <!-- ==================== 1. SPLASH SCREEN INICIAL ESTILO NETFLIX ==================== -->
+  <div id="splash-screen" class="fixed inset-0 bg-slate-950 z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
+    <div class="text-center space-y-6 animate-logo-pop">
+      <div class="w-28 h-28 bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-500 rounded-3xl flex items-center justify-center font-black text-white text-5xl shadow-2xl shadow-blue-500/50 mx-auto animate-pulse-fast border border-blue-400/30">
+        CS
+      </div>
+      <div>
+        <h2 class="text-3xl font-black text-white tracking-widest uppercase font-mono">CSDev</h2>
+        <p class="text-xs text-blue-400 font-mono tracking-wider mt-2 flex items-center justify-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
+          Carregando plataforma...
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 2. TELA DE ACESSO COM BOTÃO ESCONDIDO DE GESTOR ==================== -->
+  <div id="auth-container" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 max-w-md w-full space-y-6 shadow-2xl relative">
+      
+      <!-- BOTÃO ESCONDIDO DO GESTOR -->
+      <div class="flex justify-end mb-[-12px]">
+        <button type="button" onclick="ativarModoGestor()" class="text-[10px] text-slate-600 hover:text-blue-400 transition-colors cursor-pointer select-none font-mono">
+          [ Acesso Gestor ]
+        </button>
+      </div>
+
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center font-black text-white text-2xl shadow-lg shadow-blue-500/30 mx-auto mb-3">
+          CS
         </div>
-        <p class="mt-4 text-xs font-mono text-indigo-400 tracking-widest uppercase animate-pulse">Carregando ecossistema CSDEV...</p>
+        <h2 id="auth-titulo" class="text-2xl font-black text-white tracking-tight">Acessar Ecossistema CSDev</h2>
+        <p id="auth-subtitulo" class="text-xs text-slate-400">Entre com os dados da sua empresa para liberar o portal.</p>
+      </div>
+
+      <form onsubmit="processarAutenticacaoEntrada(event)" class="space-y-4">
+        <div id="campo-empresa-container">
+          <label class="block text-xs font-bold text-slate-300 mb-1">Nome Fantasia / Empresa:</label>
+          <input type="text" id="auth-nome-empresa" placeholder="Sua Empresa Ltda" class="w-full p-3 bg-slate-950 text-white rounded-xl border border-slate-800 text-xs focus:outline-none focus:border-blue-500 font-sans" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">E-mail Corporativo:</label>
+          <input type="email" id="auth-email" required placeholder="contato@suaempresa.com" class="w-full p-3 bg-slate-950 text-white rounded-xl border border-slate-800 text-xs focus:outline-none focus:border-blue-500 font-mono" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Senha:</label>
+          <input type="password" id="auth-senha" required placeholder="••••••••" class="w-full p-3 bg-slate-950 text-white rounded-xl border border-slate-800 text-xs focus:outline-none focus:border-blue-500" />
+        </div>
+
+        <button type="submit" id="btn-submit-auth" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-lg shadow-blue-600/30">
+          Entrar / Cadastrar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== 3. SITE PRINCIPAL ==================== -->
+  <div id="site-principal" class="hidden flex-col min-h-screen">
+    
+    <!-- BANNER DE BOAS-VINDAS -->
+    <div id="banner-boas-vindas" class="bg-blue-600 text-white py-2.5 px-4 text-center text-xs font-bold flex justify-center items-center gap-2 shadow-md">
+      <span>🎉</span>
+      <span id="mensagem-boas-vindas">Bem-vindo(a)!</span>
     </div>
 
-    <!-- HEADER / NAVBAR -->
-    <header class="sticky top-0 z-40 bg-[#070a12]/80 backdrop-blur-md border-b border-slate-800/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center font-black text-white text-xl shadow-lg shadow-indigo-500/20">
-                    CS
-                </div>
-                <span class="font-bold text-xl tracking-tight text-white">CSDEV<span class="text-indigo-500">.</span></span>
-            </div>
-
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-                <a href="#solucoes" class="hover:text-indigo-400 transition">Soluções</a>
-                <a href="#simulador" class="hover:text-indigo-400 transition">Simulador & PIX</a>
-                <a href="#calculadora-roi" class="hover:text-indigo-400 transition">Calculadora ROI</a>
-                <a href="#portfolio" class="hover:text-indigo-400 transition">Portfólio</a>
-                <a href="#sobre" class="hover:text-indigo-400 transition">Sobre</a>
-            </nav>
-
-            <div class="flex items-center gap-3">
-                <button onclick="toggleAuthModal()" class="text-xs font-semibold px-4 py-2.5 rounded-xl bg-indigo-600/10 border border-indigo-500/30 hover:border-indigo-500 text-indigo-300 transition flex items-center gap-2">
-                    <span>🔑</span> Área do Cliente / Gestor
-                </button>
-                <button onclick="openScheduleModal()" class="text-xs font-semibold px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition text-white shadow-lg shadow-indigo-600/30">
-                    Agendar Reunião
-                </button>
-            </div>
+    <!-- CABEÇALHO / NAVEGAÇÃO PRINCIPAL -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-slate-950/90 border-b border-slate-800/80">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        
+        <div class="flex items-center gap-3 cursor-pointer select-none" onclick="registrarCliqueLogo()">
+          <div class="w-10 h-10 bg-gradient-to-tr from-blue-700 to-blue-500 rounded-xl flex items-center justify-center font-black text-white text-xl shadow-lg shadow-blue-500/20">
+            CS
+          </div>
+          <div>
+            <span class="font-black text-xl tracking-tight text-white block leading-none">CSDev</span>
+            <span class="text-[11px] text-slate-400 font-mono">CNPJ: 67.054.464/0001-51</span>
+          </div>
         </div>
+
+        <nav class="hidden lg:flex items-center gap-8 text-xs font-bold uppercase tracking-wider text-slate-400">
+          <a href="#solucoes" class="hover:text-blue-400 transition-colors">Soluções</a>
+          <a href="#portfolio" class="hover:text-blue-400 transition-colors">Portfólio</a>
+          <a href="#simulador" class="hover:text-blue-400 transition-colors">Calculadora ROI</a>
+          <a href="#portal" class="hover:text-blue-400 transition-colors">Portal Transparência</a>
+          <a href="#ia-assistente" class="hover:text-blue-400 transition-colors">Assistente IA</a>
+          <a href="#faq" class="hover:text-blue-400 transition-colors">FAQ</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+          <button onclick="toggleModal('modal-agendamento')" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-3 rounded-xl transition-all shadow-lg shadow-blue-600/20 flex items-center gap-2">
+            <span>📅</span> Agendar Reunião
+          </button>
+          <button onclick="encerrarSessaoEntrada()" class="text-xs bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 px-3 py-3 rounded-xl font-bold transition">
+            Sair
+          </button>
+        </div>
+      </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <section class="relative pt-20 pb-16 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-6">
-                <span class="w-2 h-2 rounded-full bg-indigo-400 animate-ping"></span> Engenharia de Software & Analytics
-            </span>
-            <h1 class="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight max-w-4xl mx-auto">
-                Transformamos processos complexos em <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-pink-500">sistemas de alta performance</span>.
-            </h1>
-            <p class="mt-6 text-slate-400 text-base sm:text-lg max-w-2xl mx-auto">
-                Aplicações web sob medida, dashboards interativos em tempo real e automação avançada para impulsionar a operação do seu negócio.
+    <main class="flex-grow space-y-24 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+
+      <!-- HERO SECTION -->
+      <section class="text-center space-y-6 max-w-4xl mx-auto pt-4">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-950/80 border border-blue-800/80 rounded-full text-xs font-mono text-blue-400 shadow-inner">
+          <span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
+          Engenharia de Software &amp; Inteligência Artificial Corporativa
+        </div>
+        
+        <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-none">
+          Sistemas Customizados para Maximizar a Operação do Seu Negócio
+        </h1>
+        
+        <p class="text-slate-400 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
+          Desenvolvimento de softwares web de alto desempenho, automação de fluxos financeiros, integração de banco de dados via Supabase e soluções com IA sob medida.
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+          <a href="#simulador" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm px-6 py-3.5 rounded-xl shadow-lg shadow-blue-600/30 transition-all">
+            Calcular Retorno sobre Investimento
+          </a>
+          <a href="#portfolio" class="bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 font-bold text-sm px-6 py-3.5 rounded-xl transition-all">
+            Ver Sistemas em Operação
+          </a>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-10 border-t border-slate-900">
+          <div class="p-4 bg-slate-900/40 rounded-xl border border-slate-800/60 text-left">
+            <span class="text-blue-400 font-black text-xl block mb-1">100%</span>
+            <span class="text-xs text-slate-400">Propriedade Intelectual</span>
+          </div>
+          <div class="p-4 bg-slate-900/40 rounded-xl border border-slate-800/60 text-left">
+            <span class="text-emerald-400 font-black text-xl block mb-1">SSL 256-bit</span>
+            <span class="text-xs text-slate-400">Segurança de Dados</span>
+          </div>
+          <div class="p-4 bg-slate-900/40 rounded-xl border border-slate-800/60 text-left">
+            <span class="text-purple-400 font-black text-xl block mb-1">Supabase</span>
+            <span class="text-xs text-slate-400">Banco Postgres Escalável</span>
+          </div>
+          <div class="p-4 bg-slate-900/40 rounded-xl border border-slate-800/60 text-left">
+            <span class="text-amber-400 font-black text-xl block mb-1">NFS-e</span>
+            <span class="text-xs text-slate-400">Faturamento Oficial</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOLUÇÕES -->
+      <section id="solucoes" class="space-y-8">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl sm:text-3xl font-black text-white">Soluções Tecnológicas Especializadas</h2>
+          <p class="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">Construímos a infraestrutura digital ideal para acelerar a produtividade do seu time.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-slate-900 border border-slate-800 hover:border-blue-500/40 p-6 rounded-2xl transition-all space-y-4">
+            <div class="w-12 h-12 bg-blue-950 border border-blue-800 rounded-xl flex items-center justify-center text-blue-400 text-2xl font-bold">💻</div>
+            <h3 class="text-lg font-bold text-white">Sistemas Web Customizados</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Dashboards operacionais, sistemas de cobrança, catálogos digitais e agendamentos em tempo real com React e Tailwind.
             </p>
-            <div class="mt-8 flex flex-wrap justify-center gap-4">
-                <button onclick="openScheduleModal()" class="px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-xl shadow-indigo-600/30 transition flex items-center gap-2">
-                    <span>📅</span> Agendar Reunião Comercial (Isabella)
-                </button>
-                <button onclick="sendBudgetToWhatsapp()" class="px-6 py-3.5 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-900/50 text-slate-200 font-semibold text-sm transition flex items-center gap-2">
-                    <span>⚡</span> Falar com Líder Técnico / CEO (Cleiton)
-                </button>
-            </div>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 hover:border-emerald-500/40 p-6 rounded-2xl transition-all space-y-4">
+            <div class="w-12 h-12 bg-emerald-950 border border-emerald-800 rounded-xl flex items-center justify-center text-emerald-400 text-2xl font-bold">⚡</div>
+            <h3 class="text-lg font-bold text-white">Automação de Processos &amp; APIs</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Integração automatizada entre formulários web, CRM, Google Workspace e APIs financeiras.
+            </p>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 hover:border-purple-500/40 p-6 rounded-2xl transition-all space-y-4">
+            <div class="w-12 h-12 bg-purple-950 border border-purple-800 rounded-xl flex items-center justify-center text-purple-400 text-2xl font-bold">🤖</div>
+            <h3 class="text-lg font-bold text-white">Atendimento Guiado por IA</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Chatbots inteligentes treinados no seu catálogo para responder dúvidas e qualificar leads 24/7.
+            </p>
+          </div>
         </div>
-    </section>
+      </section>
 
-    <!-- SIMULADOR DE ORÇAMENTO COM ASSINATURA & PIX -->
-    <section id="simulador" class="py-16 bg-slate-900/40 border-y border-slate-800/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-white">Simulador Interativo de Serviços</h2>
-                <p class="text-slate-400 text-sm mt-2">Monte seu pacote, assine o termo e gere cobrança em PIX em tempo real.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                <!-- Opções de Módulos -->
-                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4" id="solucoes">
-                    <div onclick="toggleModule('Landing Page Premium', 1800, this)" class="module-card cursor-pointer p-5 rounded-2xl border border-slate-800 bg-slate-900/60 hover:border-indigo-500/50 transition relative">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-white text-base">Landing Page Premium</h3>
-                            <span class="text-xs font-mono text-indigo-400 font-bold">R$ 1.800</span>
-                        </div>
-                        <p class="text-xs text-slate-400">Design moderno, alta conversão, responsivo e otimizado para SEO.</p>
-                    </div>
-
-                    <div onclick="toggleModule('Sistema Web Customizado', 4500, this)" class="module-card cursor-pointer p-5 rounded-2xl border border-slate-800 bg-slate-900/60 hover:border-indigo-500/50 transition relative">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-white text-base">Sistema Web Customizado</h3>
-                            <span class="text-xs font-mono text-indigo-400 font-bold">R$ 4.500</span>
-                        </div>
-                        <p class="text-xs text-slate-400">Plataforma em React/Next.js com Supabase, autenticação e banco de dados.</p>
-                    </div>
-
-                    <div onclick="toggleModule('Dashboard & Business Intelligence', 2200, this)" class="module-card cursor-pointer p-5 rounded-2xl border border-slate-800 bg-slate-900/60 hover:border-indigo-500/50 transition relative">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-white text-base">Dashboard & Business Intelligence</h3>
-                            <span class="text-xs font-mono text-indigo-400 font-bold">R$ 2.200</span>
-                        </div>
-                        <p class="text-xs text-slate-400">Painéis interativos para métricas de cobrança, vendas e relatórios em tempo real.</p>
-                    </div>
-
-                    <div onclick="toggleModule('Automações & WhatsApp API', 1500, this)" class="module-card cursor-pointer p-5 rounded-2xl border border-slate-800 bg-slate-900/60 hover:border-indigo-500/50 transition relative">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-white text-base">Automações & WhatsApp API</h3>
-                            <span class="text-xs font-mono text-indigo-400 font-bold">R$ 1.500</span>
-                        </div>
-                        <p class="text-xs text-slate-400">Disparo automatizado de notificações, régua de cobrança e lembretes.</p>
-                    </div>
-                </div>
-
-                <!-- Resumo, Assinatura e Pagamento -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sticky top-28 space-y-5">
-                    <h3 class="text-lg font-bold text-white pb-3 border-b border-slate-800">Resumo da Estimativa</h3>
-                    <div id="selected-summary-list" class="space-y-2 min-h-[60px]">
-                        <p class="text-xs text-slate-500 italic">Nenhum módulo selecionado ainda.</p>
-                    </div>
-
-                    <div class="border-t border-slate-800 pt-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-slate-400 font-medium">Investimento Estimado:</span>
-                            <span id="total-price-display" class="text-xl font-black text-emerald-400 font-mono">R$ 0,00</span>
-                        </div>
-                    </div>
-
-                    <!-- CAMPO DE ASSINATURA DIGITAL DO CLIENTE -->
-                    <div class="border-t border-slate-800 pt-3">
-                        <label class="block text-xs font-bold text-slate-300 mb-1">Assinatura Digital do Contrato</label>
-                        <div class="bg-slate-950 border border-slate-700 rounded-xl overflow-hidden relative">
-                            <canvas id="signature-canvas" class="w-full h-24 touch-none cursor-crosshair"></canvas>
-                            <button onclick="clearSignature()" class="absolute bottom-1 right-2 text-[10px] text-slate-400 hover:text-white bg-slate-800 px-2 py-0.5 rounded">Limpar</button>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2 pt-2">
-                        <button onclick="generateProposalPDF()" class="w-full py-2.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition flex items-center justify-center gap-2">
-                            📄 PDF Assinado
-                        </button>
-                        <button onclick="openPixModal()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
-                            💸 Pagar Sinal via PIX (50%)
-                        </button>
-                        <button onclick="sendBudgetToIsabella()" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition flex items-center justify-center gap-2">
-                            💬 Enviar Comercial (Isabella)
-                        </button>
-                    </div>
-                </div>
-            </div>
+      <!-- PORTFÓLIO -->
+      <section id="portfolio" class="space-y-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-slate-800 pb-4 gap-4">
+          <div>
+            <h2 class="text-2xl font-black text-white tracking-tight">Portfólio &amp; Casos de Sucesso</h2>
+            <p class="text-xs text-slate-400">Sistemas desenvolvidos pela CSDev operando ativamente no mercado.</p>
+          </div>
+          <span class="text-xs text-slate-400 font-mono bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
+            Infraestrutura Serverless + Supabase
+          </span>
         </div>
-    </section>
 
-    <!-- CALCULADORA DE RETORNO SOBRE INVESTIMENTO (ROI) -->
-    <section id="calculadora-roi" class="py-16 border-b border-slate-800/80">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold text-white mb-2">Calculadora de ROI & Redução de Custos</h2>
-            <p class="text-slate-400 text-sm mb-10">Descubra quanto sua empresa economiza automatizando processos manuais com a CSDEV.</p>
-
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 text-left grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Funcionários envolvidos em tarefas manuais</label>
-                        <input type="number" id="roi-employees" value="3" min="1" oninput="calculateROI()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Horas gastas por dia por pessoa (ex: relatórios/cobrança)</label>
-                        <input type="number" id="roi-hours" value="2" min="1" oninput="calculateROI()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Custo médio por hora de trabalho (R$)</label>
-                        <input type="number" id="roi-hourly-rate" value="35" min="10" oninput="calculateROI()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-                    </div>
-                </div>
-
-                <div class="bg-slate-950/80 border border-indigo-500/30 rounded-xl p-6 text-center space-y-4">
-                    <div>
-                        <span class="text-xs uppercase font-mono text-slate-400 tracking-wider">Economia Anual Estimada</span>
-                        <h3 id="roi-annual-savings" class="text-3xl font-black text-emerald-400 mt-1 font-mono">R$ 50.400,00</h3>
-                    </div>
-                    <div class="pt-3 border-t border-slate-800 text-xs text-slate-400">
-                        Aproximadamente <strong id="roi-hours-saved" class="text-indigo-400">1.440 horas</strong> de trabalho manual poupadas por ano para o seu time focar em crescimento.
-                    </div>
-                    <button onclick="openScheduleModal()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-semibold text-white transition">
-                        Quero Automatizar Minha Operação
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- PORTFÓLIO DINÂMICO -->
-    <section id="portfolio" class="py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 transition-all flex flex-col">
+            <div class="p-6 space-y-4 flex-grow">
+              <div class="flex justify-between items-start">
                 <div>
-                    <h2 class="text-3xl font-bold text-white">Projetos em Destaque</h2>
-                    <p class="text-slate-400 text-sm mt-2">Casos de uso e soluções entregues para operações reais.</p>
+                  <h3 class="font-bold text-white text-xl">Barbearia Danilo</h3>
+                  <span class="text-[11px] text-slate-400">Agendamento &amp; Gestão de Atendimentos</span>
                 </div>
-                <div class="flex gap-2 mt-4 md:mt-0" id="portfolio-filters">
-                    <button onclick="filterPortfolio('all', this)" class="filter-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 text-white">Todos</button>
-                    <button onclick="filterPortfolio('web', this)" class="filter-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">Sistemas Web / E-commerce</button>
-                    <button onclick="filterPortfolio('bi', this)" class="filter-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">Analytics/BI</button>
+                <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-1 rounded-md font-mono font-bold">
+                  ● Ativo em Produção
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Plataforma para seleção de profissionais, agendamento de horários em tempo real e confirmação automatizada.
+              </p>
+              <div class="flex flex-wrap gap-2 pt-2">
+                <span class="text-[10px] bg-slate-950 border border-slate-800 px-2 py-1 rounded text-slate-300 font-mono">React</span>
+                <span class="text-[10px] bg-slate-950 border border-slate-800 px-2 py-1 rounded text-slate-300 font-mono">Tailwind</span>
+                <span class="text-[10px] bg-slate-950 border border-slate-800 px-2 py-1 rounded text-slate-300 font-mono">Supabase</span>
+              </div>
+            </div>
+            <div class="px-6 py-4 bg-slate-950 border-t border-slate-800/80 flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-400">Status: Operacional</span>
+              <a href="https://barbeariadanilo.netlify.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-400 hover:underline">
+                Visualizar Projeto &rarr;
+              </a>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 transition-all flex flex-col">
+            <div class="p-6 space-y-4 flex-grow">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h3 class="font-bold text-white text-xl">Mi Prime Cell</h3>
+                  <span class="text-[11px] text-slate-400">E-Commerce &amp; Catálogo Interativo</span>
                 </div>
+                <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-1 rounded-md font-mono font-bold">
+                  ● Ativo em Produção
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Catálogo interativo focado em venda de smartphones e acessórios com direcionamento rápido para fechamento de vendas.
+              </p>
+              <div class="flex flex-wrap gap-2 pt-2">
+                <span class="text-[10px] bg-slate-950 border border-slate-800 px-2 py-1 rounded text-slate-300 font-mono">Next.js</span>
+                <span class="text-[10px] bg-slate-950 border border-slate-800 px-2 py-1 rounded text-slate-300 font-mono">APIs Financeiras</span>
+                <span class="text-[10px] bg-slate-950 border border-slate-800 px-2 py-1 rounded text-slate-300 font-mono">Netlify</span>
+              </div>
+            </div>
+            <div class="px-6 py-4 bg-slate-950 border-t border-slate-800/80 flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-400">Status: Operacional</span>
+              <a href="https://miprimecell.netlify.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-400 hover:underline">
+                Visualizar Projeto &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SIMULADOR DE ROI -->
+      <section id="simulador" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start bg-slate-900/40 border border-slate-800 rounded-3xl p-6 sm:p-10 backdrop-blur-sm">
+        <div class="lg:col-span-6 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-blue-400 uppercase tracking-wider block mb-1">Simulador Interativo</span>
+            <h2 class="text-2xl sm:text-3xl font-black text-white">Calculadora de Economia Operacional (ROI)</h2>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+            Descubra a estimativa de retorno ao automatizar processos repetitivos da sua equipe com sistemas CSDev.
+          </p>
+          
+          <div class="space-y-5 pt-2">
+            <div>
+              <div class="flex justify-between items-center mb-1.5">
+                <label class="text-xs font-bold text-slate-300">Horas gastas em tarefas manuais (semanais):</label>
+                <span id="disp-horas" class="text-xs font-mono font-bold text-blue-400">15 hrs</span>
+              </div>
+              <input type="range" id="input-horas" min="5" max="80" value="15" step="1" oninput="atualizarECalcularROI()" class="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-blue-500" />
             </div>
 
-            <!-- CONTAINER ONDE OS PROJETOS SÃO RENDERIZADOS -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="portfolio-grid"></div>
-        </div>
-    </section>
+            <div>
+              <div class="flex justify-between items-center mb-1.5">
+                <label class="text-xs font-bold text-slate-300">Custo médio por hora operacional (R$):</label>
+                <span id="disp-custo-hora" class="text-xs font-mono font-bold text-blue-400">R$ 45,00</span>
+              </div>
+              <input type="range" id="input-custo-hora" min="20" max="200" value="45" step="5" oninput="atualizarECalcularROI()" class="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-blue-500" />
+            </div>
 
-    <!-- SEÇÃO SOBRE -->
-    <section id="sobre" class="py-16 bg-slate-900/40 border-t border-slate-800/80">
-        <div class="max-w-4xl mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold text-white">Sobre a CSDEV</h2>
-            <p class="text-slate-400 text-sm mt-4 leading-relaxed">
-                Fundada e liderada por <strong class="text-white">Cleiton</strong> (Engenheiro de Software com formação em Análise e Desenvolvimento de Sistemas), a CSDEV é focada em criar infraestruturas de software modernas, automações eficientes e dashboards analíticos de alto impacto para tomada de decisão.
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">Estimativa do Investimento Inicial (R$):</label>
+              <input type="number" id="input-investimento" value="5000" oninput="calcularROI()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500 font-mono" />
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800 pb-3">
+            Projeção Financeira &amp; Retorno
+          </h3>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+              <span class="text-[10px] text-slate-400 block font-bold mb-1">ECONOMIA MENSAL ESTIMADA</span>
+              <span id="res-economia-mes" class="text-xl font-black text-emerald-400 font-mono">R$ 2.700,00</span>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-lg border border-slate-800/80">
+              <span class="text-[10px] text-slate-400 block font-bold mb-1">PAYBACK ESTIMADO</span>
+              <span id="res-payback" class="text-xl font-black text-blue-400 font-mono">~ 1,9 Meses</span>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-[11px] text-slate-400 font-bold uppercase">Comparativo Anual de Custos</span>
+              <span class="text-[10px] text-emerald-400 font-mono font-bold" id="res-porcentagem-economia">Economia de 85%</span>
+            </div>
+
+            <div class="flex items-end justify-center gap-12 h-44 bg-slate-950 p-6 rounded-xl border border-slate-800/80">
+              <div class="flex flex-col items-center gap-2 w-28 h-full justify-end">
+                <span id="label-custo-atual" class="text-[10px] font-bold text-red-400 font-mono truncate max-w-full">R$ 32.400,00</span>
+                <div id="bar-custo-atual" class="w-full bg-red-500/30 border border-red-500 rounded-t-md transition-all duration-500 h-28"></div>
+                <span class="text-[10px] text-slate-400 font-bold text-center leading-tight">Custo Sem Automação</span>
+              </div>
+
+              <div class="flex flex-col items-center gap-2 w-28 h-full justify-end">
+                <span id="label-custo-csdev" class="text-[10px] font-bold text-emerald-400 font-mono truncate max-w-full">R$ 5.000,00</span>
+                <div id="bar-custo-csdev" class="w-full bg-emerald-500/30 border border-emerald-500 rounded-t-md transition-all duration-500 h-8"></div>
+                <span class="text-[10px] text-slate-400 font-bold text-center leading-tight">Investimento CSDev</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PORTAL DE TRANSPARÊNCIA DO CLIENTE -->
+      <section id="portal" class="max-w-4xl mx-auto space-y-6">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl font-black text-white">Portal de Transparência do Cliente</h2>
+          <p class="text-xs text-slate-400">Acompanhe seus projetos e contratos ativos.</p>
+        </div>
+
+        <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6">
+          <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+            <div>
+              <span class="text-[10px] text-emerald-400 font-mono font-bold uppercase tracking-wider">● Sessão Ativa</span>
+              <p class="font-bold text-sm text-white" id="sessao-cliente-nome">Empresa Cadastrada</p>
+            </div>
+            <span class="text-xs bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-lg font-mono">
+              Status: Homologação
+            </span>
+          </div>
+
+          <div class="space-y-4">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Serviços &amp; Projetos em Andamento</h4>
+
+            <div class="p-5 bg-slate-950 rounded-xl border border-slate-800/80 text-xs space-y-4">
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-800/80 pb-3">
+                <div>
+                  <p class="font-bold text-sm text-white">Desenvolvimento de Sistema Web &amp; Supabase</p>
+                  <p class="text-[10px] text-slate-400">Contrato N°: #CS-2026-089</p>
+                </div>
+                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950 border border-emerald-800 px-3 py-1 rounded-md font-bold">
+                  Fase: Homologação
+                </span>
+              </div>
+
+              <div class="space-y-2">
+                <div class="flex justify-between text-[11px] font-bold">
+                  <span class="text-slate-400">Progresso de Desenvolvimento:</span>
+                  <span class="text-emerald-400 font-mono">85%</span>
+                </div>
+                <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-800">
+                  <div class="bg-emerald-500 h-full w-[85%] transition-all duration-700"></div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                <div class="p-3 bg-slate-900/60 rounded-lg border border-slate-800 text-[11px] space-y-1">
+                  <span class="text-emerald-400 font-bold block">✓ 1. Design &amp; Layout</span>
+                  <span class="text-slate-400 text-[10px]">100% Concluído</span>
+                </div>
+                <div class="p-3 bg-slate-900/60 rounded-lg border border-slate-800 text-[11px] space-y-1">
+                  <span class="text-emerald-400 font-bold block">✓ 2. Integração Supabase</span>
+                  <span class="text-slate-400 text-[10px]">100% Concluído</span>
+                </div>
+                <div class="p-3 bg-slate-900/60 rounded-lg border border-slate-800 text-[11px] space-y-1">
+                  <span class="text-blue-400 font-bold block">⏳ 3. Testes de Carga</span>
+                  <span class="text-slate-400 text-[10px]">Em Andamento</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== IA RESPONSIVA COM GEMINI API ==================== -->
+      <section id="ia-assistente" class="max-w-4xl mx-auto space-y-6">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl font-black text-white">Assistente de Inteligência Artificial</h2>
+          <p class="text-xs text-slate-400">Pergunte qualquer dúvida técnica ou solicite informações sobre nossos serviços.</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div class="flex items-center gap-3">
+              <div class="relative">
+                <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black text-sm">
+                  AI
+                </div>
+                <div class="w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-900 absolute -bottom-1 -right-1"></div>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-white leading-none">CSDev Assistant AI</h3>
+                <span class="text-[10px] text-slate-400">Online | Integrado com Gemini 2.5</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="chat-box" class="h-64 bg-slate-950 rounded-xl p-4 overflow-y-auto space-y-4 border border-slate-800/80 text-xs">
+            <div class="bg-slate-900 border border-slate-800/80 p-3 rounded-xl text-slate-300 max-w-[85%] leading-relaxed">
+              Olá! Sou a Inteligência Artificial oficial da CSDev. Como posso te ajudar hoje com suas dúvidas sobre sistemas web, custos, prazos ou integrações?
+            </div>
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <input type="text" id="chat-input" placeholder="Digite sua dúvida livremente..." class="flex-grow p-3 bg-slate-950 text-white rounded-xl border border-slate-800 text-xs focus:outline-none focus:border-blue-500" onkeypress="if(event.key === 'Enter') enviarMensagemIA()" />
+            <button type="button" id="btn-chat-send" onclick="enviarMensagemIA()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold text-xs transition shadow-md shadow-blue-600/20">
+              Enviar
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="max-w-4xl mx-auto space-y-6">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl font-black text-white">Perguntas Frequentes (FAQ)</h2>
+          <p class="text-xs text-slate-400">Dúvidas comuns sobre contratação e suporte.</p>
+        </div>
+
+        <div class="space-y-4">
+          <details class="bg-slate-900 border border-slate-800 rounded-xl p-5 group cursor-pointer transition-all">
+            <summary class="font-bold text-xs sm:text-sm text-slate-200 flex justify-between items-center list-none">
+              <span>Como funciona a entrega do código-fonte?</span>
+              <span class="group-open:rotate-180 transition-transform text-blue-400 font-bold">▼</span>
+            </summary>
+            <p class="text-xs text-slate-400 mt-4 leading-relaxed border-t border-slate-800/60 pt-3">
+              Após a finalização e quitação, o acesso completo ao repositório GitHub é fornecido com documentação técnica.
             </p>
-            <div class="mt-8">
-                <button onclick="sendBudgetToWhatsapp()" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-white transition">
-                    💬 Falar diretamente com o Líder Técnico Cleiton
-                </button>
-            </div>
-        </div>
-    </section>
+          </details>
 
-    <!-- FOOTER -->
-    <footer class="border-t border-slate-800/80 py-8 bg-[#070a12]">
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
-            &copy; 2026 CSDEV Soluções Digitais & Analytics. Todos os direitos reservados.
+          <details class="bg-slate-900 border border-slate-800 rounded-xl p-5 group cursor-pointer transition-all">
+            <summary class="font-bold text-xs sm:text-sm text-slate-200 flex justify-between items-center list-none">
+              <span>Onde o sistema é hospedado?</span>
+              <span class="group-open:rotate-180 transition-transform text-blue-400 font-bold">▼</span>
+            </summary>
+            <p class="text-xs text-slate-400 mt-4 leading-relaxed border-t border-slate-800/60 pt-3">
+              Utilizamos infraestrutura serverless na Netlify/Vercel e PostgreSQL via Supabase com segurança SSL de 256 bits.
+            </p>
+          </details>
         </div>
+      </section>
+
+    </main>
+
+    <!-- MODAL DE AGENDAMENTO -->
+    <div id="modal-agendamento" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-lg w-full space-y-5 shadow-2xl">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+          <h3 class="font-black text-white text-lg">Agendar Reunião Técnica</h3>
+          <button onclick="toggleModal('modal-agendamento')" class="text-slate-400 hover:text-white font-bold text-xl px-2">&times;</button>
+        </div>
+        
+        <form onsubmit="confirmarAgendamento(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Seu Nome / Empresa:</label>
+            <input type="text" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">E-mail Corporativo:</label>
+            <input type="email" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500" />
+          </div>
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl text-xs transition">
+            Solicitar Agendamento
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- PAINEL ADM ESCONDIDO -->
+    <div id="modal-adm" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-3xl w-full space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="font-black text-white text-lg">Painel de Controle Executivo (ADM)</h3>
+            <p class="text-[11px] text-slate-400">Área Privada - CSDev Management</p>
+          </div>
+          <button onclick="toggleModal('modal-adm')" class="text-slate-400 hover:text-white font-bold text-xl px-2">&times;</button>
+        </div>
+
+        <form id="adm-form-login" onsubmit="autenticarADM(event)" class="space-y-4">
+          <div class="p-3 bg-amber-950/40 border border-amber-800/80 rounded-xl text-xs text-amber-300">
+            🔑 Acesso exclusivo do administrador da plataforma.
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Chave Administrativa / E-mail:</label>
+            <input type="email" id="adm-email" required placeholder="cleiton@csdev.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Senha Master:</label>
+            <input type="password" id="adm-senha" required placeholder="••••••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500" />
+          </div>
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs transition">
+            Acessar Dashboard
+          </button>
+        </form>
+
+        <div id="adm-dashboard-view" class="hidden space-y-6">
+          <div class="flex justify-between items-center bg-slate-950 p-4 rounded-xl border border-slate-800">
+            <div>
+              <span class="text-xs text-slate-400 block font-bold">STATUS DO SISTEMA</span>
+              <span class="text-emerald-400 font-mono text-xs font-bold">● Supabase &amp; APIs Conectados</span>
+            </div>
+            <button onclick="fecharDashboardADM()" class="text-xs text-slate-400 hover:text-white underline">
+              Encerrar Sessão ADM
+            </button>
+          </div>
+
+          <!-- Configuração de API Key do Gemini -->
+          <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
+            <h4 class="text-xs font-bold text-white uppercase tracking-wider">Configuração da API Gemini</h4>
+            <div class="flex gap-2">
+              <input type="password" id="gemini-api-key-input" placeholder="Insira sua Chave da API do Gemini" class="flex-grow bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white font-mono focus:outline-none focus:border-blue-500" />
+              <button onclick="salvarGeminiKey()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-4 rounded-xl transition">
+                Salvar Chave
+              </button>
+            </div>
+            <p class="text-[10px] text-slate-400">A chave será mantida com segurança no LocalStorage para acionar o assistente em tempo real.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <span class="text-[10px] text-slate-400 block font-bold mb-1">CONTRATOS ATIVOS</span>
+              <span class="text-2xl font-black text-emerald-400 font-mono">14</span>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <span class="text-[10px] text-slate-400 block font-bold mb-1">CANCELADOS</span>
+              <span class="text-2xl font-black text-red-400 font-mono">1</span>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <span class="text-[10px] text-slate-400 block font-bold mb-1">FATURAMENTO (MÊS)</span>
+              <span class="text-2xl font-black text-blue-400 font-mono">R$ 48.500,00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RODAPÉ PRINCIPAL -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-black text-white text-sm">
+              CS
+            </div>
+            <span class="font-bold text-sm text-white">CSDev Software Solutions</span>
+          </div>
+          <p class="text-xs text-slate-400 font-mono">
+            CNPJ: 67.054.464/0001-51 | CLEITON DA SILVA PEREIRA
+          </p>
+        </div>
+
+        <div class="border-t border-slate-900 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+          <p>&copy; 2026 CSDev. Todos os direitos reservados.</p>
+        </div>
+      </div>
     </footer>
 
-    <!-- MODAL PIX -->
-    <div id="pix-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 text-center relative">
-            <button onclick="closePixModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
-            <h3 class="text-lg font-bold text-white mb-1">Pagamento de Sinal PIX (50%)</h3>
-            <p class="text-xs text-slate-400 mb-4">Escaneie o QR Code abaixo para efetuar a reserva do projeto.</p>
-            
-            <div id="qrcode-container" class="bg-white p-4 rounded-xl inline-block mb-4 shadow-lg"></div>
-            
-            <div class="space-y-2">
-                <button onclick="copyPixCode()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-mono text-indigo-300 rounded-xl transition">
-                    📋 Copiar Chave PIX (Copia e Cola)
-                </button>
-                <button onclick="confirmPixPayment()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white rounded-xl transition">
-                    ✓ Confirmar Pagamento
-                </button>
-            </div>
-        </div>
-    </div>
+  </div>
 
-    <!-- MODAL AGENDAMENTO GOOGLE MEET -->
-    <div id="schedule-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 relative">
-            <button onclick="closeScheduleModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
-            <h3 class="text-xl font-bold text-white mb-2">Agendar Reunião</h3>
-            <p class="text-xs text-slate-400 mb-6">Alinhe seu projeto diretamente com nossa equipe comercial no Google Meet.</p>
-            
-            <form onsubmit="handleScheduleSubmit(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Seu Nome / Empresa</label>
-                    <input type="text" id="sched-name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Data Preferida</label>
-                        <input type="date" id="sched-date" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Horário</label>
-                        <input type="time" id="sched-time" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-                    </div>
-                </div>
-                <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-semibold text-xs text-white transition shadow-lg shadow-indigo-600/30">
-                    Solicitar Reunião via WhatsApp
-                </button>
-            </form>
-        </div>
-    </div>
+  <!-- ==================== LÓGICA JAVASCRIPT ==================== -->
+  <script>
+    let contadorCliquesLogo = 0;
+    let modoGestor = false;
+    let geminiApiKey = localStorage.getItem('csdev_gemini_api_key') || "";
 
-    <!-- MODAL ÁREA DO CLIENTE & PAINEL DO GESTOR -->
-    <div id="auth-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="toggleAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
-            
-            <!-- ESTADO DESLOGADO -->
-            <div id="auth-logged-out" class="space-y-5">
-                <div>
-                    <h3 class="text-xl font-bold text-white mb-1">Portal CSDEV</h3>
-                    <p class="text-xs text-slate-400">Acesse sua área restrita ou gerencie o sistema.</p>
-                </div>
+    const GESTOR_EMAIL = "cleiton@csdev.com";
+    const GESTOR_SENHA = "2522";
 
-                <div class="p-4 bg-indigo-950/40 border border-indigo-500/30 rounded-xl flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold text-indigo-300 block">Acesso do Gestor</span>
-                        <span class="text-[11px] text-slate-400">Entrar como CEO / Desenvolvedor Cleiton</span>
-                    </div>
-                    <button onclick="enterAsCeo()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition">
-                        Entrar Agora
-                    </button>
-                </div>
+    const SYSTEM_PROMPT = `Você é o CSDev Assistant AI, o assistente virtual oficial da empresa CSDev (CNPJ: 67.054.464/0001-51), especializada em Engenharia de Software, automações de fluxos com APIs, bancos de dados Supabase/PostgreSQL e soluções com Inteligência Artificial.
+    
+    Seus projetos ativos mais notáveis em portfólio incluem:
+    1. Barbearia Danilo - Plataforma de agendamento em tempo real (https://barbeariadanilo.netlify.app/)
+    2. Mi Prime Cell - E-commerce e catálogo interativo (https://miprimecell.netlify.app/)
 
-                <div class="relative flex py-1 items-center">
-                    <div class="flex-grow border-t border-slate-800"></div>
-                    <span class="flex-shrink mx-3 text-slate-500 text-[10px] uppercase tracking-widest font-mono">ou faça login de cliente</span>
-                    <div class="flex-grow border-t border-slate-800"></div>
-                </div>
+    Seu objetivo é responder dúvidas técnicas, comerciais e de prazos de maneira educada, profissional, direta e concisa.`;
 
-                <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">E-mail corporativo</label>
-                        <input type="email" id="auth-email" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Senha</label>
-                        <input type="password" id="auth-password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-                    </div>
-                    <button type="submit" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl font-semibold text-xs text-white transition">
-                        Entrar no Portal
-                    </button>
-                </form>
-            </div>
+    window.addEventListener('DOMContentLoaded', () => {
+      const splash = document.getElementById('splash-screen');
+      const usuarioSalvo = localStorage.getItem('csdev_empresa_nome');
 
-            <!-- ESTADO LOGADO: PAINEL COMPLETO -->
-            <div id="auth-logged-in" class="hidden space-y-6">
-                <div class="flex justify-between items-center pb-3 border-b border-slate-800">
-                    <div>
-                        <h3 id="auth-title" class="text-lg font-bold text-white">Painel Gestor / CEO Cleiton</h3>
-                        <span class="text-[11px] text-emerald-400 flex items-center gap-1">● Sessão Ativa com Supabase Sync</span>
-                    </div>
-                    <button onclick="logoutUser()" class="text-xs px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-lg transition">
-                        Sair
-                    </button>
-                </div>
+      if (geminiApiKey) {
+        document.getElementById('gemini-api-key-input').value = geminiApiKey;
+      }
 
-                <!-- PAINEL DE GRÁFICOS DO GESTOR -->
-                <div id="ceo-dashboard-view" class="space-y-4">
-                    <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Métricas de Desempenho & Pipeline</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                            <canvas id="chart-pipeline" class="w-full h-40"></canvas>
-                        </div>
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                            <canvas id="chart-conversions" class="w-full h-40"></canvas>
-                        </div>
-                    </div>
-                </div>
+      setTimeout(() => {
+        splash.classList.add('opacity-0');
+        setTimeout(() => {
+          splash.classList.add('hidden');
+          
+          if (usuarioSalvo) {
+            iniciarSessaoPrincipal(usuarioSalvo);
+          }
+        }, 500);
+      }, 1800);
+    });
 
-                <!-- TRACKER KANBAN DE STATUS DE PROJETO -->
-                <div class="p-4 bg-slate-800/40 rounded-xl border border-slate-700/60">
-                    <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">Acompanhamento do Projeto em Tempo Real</h4>
-                    <div class="grid grid-cols-4 gap-2 text-center text-[10px] font-bold">
-                        <div class="p-2 bg-indigo-950/60 border border-indigo-500/40 text-indigo-300 rounded-lg">1. Briefing</div>
-                        <div class="p-2 bg-slate-800 border border-slate-700 text-slate-400 rounded-lg">2. UI/UX</div>
-                        <div class="p-2 bg-slate-800 border border-slate-700 text-slate-400 rounded-lg">3. Backend/Dev</div>
-                        <div class="p-2 bg-slate-800 border border-slate-700 text-slate-400 rounded-lg">4. Entregue</div>
-                    </div>
-                </div>
+    function salvarGeminiKey() {
+      const inputVal = document.getElementById('gemini-api-key-input').value.trim();
+      geminiApiKey = inputVal;
+      localStorage.setItem('csdev_gemini_api_key', inputVal);
+      alert('Chave API do Gemini salva com sucesso!');
+    }
 
-                <!-- CADASTRO DE PORTFÓLIO -->
-                <div class="p-4 bg-slate-800/50 rounded-xl border border-slate-700/60">
-                    <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <span>🚀</span> Publicar Novo Projeto no Portfólio
-                    </h4>
-                    <form onsubmit="addPortfolioProject(event)" class="space-y-3">
-                        <div>
-                            <label class="block text-[11px] text-slate-300 mb-1">Nome do Projeto</label>
-                            <input type="text" id="proj-title" placeholder="Ex: Sistema de Automação" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-[11px] text-slate-300 mb-1">Categoria</label>
-                                <select id="proj-category" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                                    <option value="web">Sistemas Web</option>
-                                    <option value="bi">Analytics / BI</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[11px] text-slate-300 mb-1">Tags (separadas por vírgula)</label>
-                                <input type="text" id="proj-tags" placeholder="React, Node.js, Supabase" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-300 mb-1">URL do Projeto / Link Live</label>
-                            <input type="url" id="proj-url" placeholder="https://exemplo.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-300 mb-1">Descrição Curta</label>
-                            <textarea id="proj-desc" rows="2" placeholder="Resumo técnico do projeto..." required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"></textarea>
-                        </div>
-                        <button type="submit" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition">
-                            Publicar no Portfólio do Site
-                        </button>
-                    </form>
-                </div>
+    function ativarModoGestor() {
+      modoGestor = !modoGestor;
+      const campoEmpresa = document.getElementById('campo-empresa-container');
+      const inputEmpresa = document.getElementById('auth-nome-empresa');
+      const titulo = document.getElementById('auth-titulo');
+      const subtitulo = document.getElementById('auth-subtitulo');
+      const btnSubmit = document.getElementById('btn-submit-auth');
+      const inputEmail = document.getElementById('auth-email');
 
-                <!-- BIBLIOTECA DE PRODUTOS -->
-                <div class="p-4 bg-slate-800/50 rounded-xl border border-slate-700/60">
-                    <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <span>🗂️</span> Biblioteca de Produtos
-                    </h4>
+      if (modoGestor) {
+        campoEmpresa.classList.add('hidden');
+        inputEmpresa.removeAttribute('required');
+        titulo.innerText = "Acesso Gestor CSDev";
+        subtitulo.innerText = "Insira suas credenciais administrativas para gerenciar a plataforma.";
+        btnSubmit.innerText = "Entrar como Gestor";
+        btnSubmit.className = "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-lg shadow-emerald-600/30";
+        inputEmail.placeholder = "cleiton@csdev.com";
+      } else {
+        campoEmpresa.classList.remove('hidden');
+        inputEmpresa.setAttribute('required', 'true');
+        titulo.innerText = "Acessar Ecossistema CSDev";
+        subtitulo.innerText = "Entre com os dados da sua empresa para liberar o portal.";
+        btnSubmit.innerText = "Entrar / Cadastrar";
+        btnSubmit.className = "w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-lg shadow-blue-600/30";
+        inputEmail.placeholder = "contato@suaempresa.com";
+      }
+    }
 
-                    <div class="flex gap-2 mb-3 flex-wrap" id="product-filters">
-                        <button onclick="filterProducts('all', this)" class="product-filter-btn text-[11px] font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 text-white">Todos</button>
-                        <button onclick="filterProducts('ecommerce', this)" class="product-filter-btn text-[11px] font-semibold px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-700">E-commerce</button>
-                        <button onclick="filterProducts('landing', this)" class="product-filter-btn text-[11px] font-semibold px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-700">Landing Page</button>
-                        <button onclick="filterProducts('catalogo', this)" class="product-filter-btn text-[11px] font-semibold px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-700">Catálogo</button>
-                    </div>
+    function processarAutenticacaoEntrada(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value.trim();
+      const senha = document.getElementById('auth-senha').value.trim();
 
-                    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4"></div>
+      if (modoGestor) {
+        if (email === GESTOR_EMAIL && senha === GESTOR_SENHA) {
+          localStorage.setItem('csdev_empresa_nome', 'Gestor Cleiton');
+          localStorage.setItem('csdev_is_gestor', 'true');
+          iniciarSessaoPrincipal('Gestor Cleiton (Administrador)', true);
+        } else {
+          alert('Credenciais de Gestor inválidas!');
+        }
+      } else {
+        const nomeEmpresa = document.getElementById('auth-nome-empresa').value.trim();
+        if (!nomeEmpresa) return;
 
-                    <form onsubmit="addProduct(event)" class="space-y-3 border-t border-slate-800 pt-3">
-                        <p class="text-[11px] text-slate-400 font-semibold">Adicionar novo produto</p>
-                        <div class="grid grid-cols-3 gap-3">
-                            <div class="col-span-2">
-                                <label class="block text-[11px] text-slate-300 mb-1">Nome do Produto</label>
-                                <input type="text" id="prod-name" placeholder="Ex: Loja Virtual Completa" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] text-slate-300 mb-1">Ícone</label>
-                                <input type="text" id="prod-icon" maxlength="2" placeholder="🛒" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-[11px] text-slate-300 mb-1">Categoria</label>
-                                <select id="prod-category" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                                    <option value="ecommerce">E-commerce</option>
-                                    <option value="landing">Landing Page</option>
-                                    <option value="catalogo">Catálogo</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[11px] text-slate-300 mb-1">Preço a partir de (R$)</label>
-                                <input type="number" id="prod-price" min="0" placeholder="890" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-300 mb-1">Descrição Curta</label>
-                            <textarea id="prod-desc" rows="2" placeholder="Resumo do produto..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"></textarea>
-                        </div>
-                        <button type="submit" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition">
-                            Adicionar à Biblioteca
-                        </button>
-                    </form>
-                </div>
+        localStorage.setItem('csdev_empresa_nome', nomeEmpresa);
+        localStorage.removeItem('csdev_is_gestor');
+        iniciarSessaoPrincipal(nomeEmpresa, false);
+      }
+    }
 
-                <!-- CHAMADOS TÉCNICOS -->
-                <div class="p-4 bg-slate-800/30 rounded-xl border border-slate-800">
-                    <h4 class="text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Suporte Técnico & Demandas</h4>
-                    <div class="space-y-2">
-                        <div class="p-2.5 bg-slate-950 border border-slate-800 rounded-lg flex justify-between items-center text-xs">
-                            <div>
-                                <span class="font-semibold text-white block">Ajuste de Webhook / WhatsApp API</span>
-                                <span class="text-[10px] text-slate-500">Aberto em 16/08/2026 por Equipe Operacional</span>
-                            </div>
-                            <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 text-[10px] font-medium border border-amber-500/20">Em Andamento</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    function iniciarSessaoPrincipal(nome, isGestor = false) {
+      document.getElementById('auth-container').classList.add('hidden');
+      
+      const sitePrincipal = document.getElementById('site-principal');
+      sitePrincipal.classList.remove('hidden');
+      sitePrincipal.classList.add('flex');
 
-    <!-- SCRIPT DE LÓGICA E INTERATIVIDADE -->
-    <script>
-        // DATA ARRAY DE PROJETOS INTEGRADO
-        const featuredProjects = [
-            {
-                id: "mi-prime-cell",
-                title: "MI PRIME CELL",
-                category: "E-commerce & Catálogo Digital",
-                type: "web",
-                description: "Plataforma interativa voltada para exibição de catálogo de smartphones, acessórios mobile e atendimento direto via WhatsApp.",
-                tags: ["React", "Next.js", "Tailwind CSS", "Netlify"],
-                image: "/images/projects/miprimecell-preview.png",
-                icon: "📱",
-                liveUrl: "https://miprimecell.netlify.app/",
-                badge: "Em Destaque",
-                featured: true
+      const isGestorSalvo = localStorage.getItem('csdev_is_gestor') === 'true';
+
+      if (isGestor || isGestorSalvo) {
+        document.getElementById('mensagem-boas-vindas').innerText = `Bem-vindo, Gestor Cleiton! Painel Administrativo Ativo.`;
+        document.getElementById('banner-boas-vindas').className = "bg-emerald-600 text-white py-2.5 px-4 text-center text-xs font-bold flex justify-center items-center gap-2 shadow-md";
+        document.getElementById('sessao-cliente-nome').innerText = "CSDev Management (Visão Gestor)";
+      } else {
+        document.getElementById('mensagem-boas-vindas').innerText = `Bem-vindo(a), ${nome}!`;
+        document.getElementById('sessao-cliente-nome').innerText = nome;
+      }
+
+      atualizarECalcularROI();
+    }
+
+    function encerrarSessaoEntrada() {
+      localStorage.removeItem('csdev_empresa_nome');
+      localStorage.removeItem('csdev_is_gestor');
+      location.reload();
+    }
+
+    function atualizarECalcularROI() {
+      const horas = document.getElementById('input-horas').value;
+      const custoHora = document.getElementById('input-custo-hora').value;
+
+      document.getElementById('disp-horas').innerText = `${horas} hrs`;
+      document.getElementById('disp-custo-hora').innerText = `R$ ${parseFloat(custoHora).toFixed(2).replace('.', ',')}`;
+      calcularROI();
+    }
+
+    function calcularROI() {
+      const horasSemanais = parseFloat(document.getElementById('input-horas').value) || 0;
+      const valorHora = parseFloat(document.getElementById('input-custo-hora').value) || 0;
+      const investimento = parseFloat(document.getElementById('input-investimento').value) || 5000;
+
+      const economiaMes = horasSemanais * 4 * valorHora;
+      const custoAnualSemAutomacao = economiaMes * 12;
+
+      document.getElementById('res-economia-mes').innerText = economiaMes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+      if (economiaMes > 0) {
+        const mesesPayback = (investimento / economiaMes).toFixed(1);
+        document.getElementById('res-payback').innerText = `~ ${mesesPayback} Meses`;
+      } else {
+        document.getElementById('res-payback').innerText = 'N/A';
+      }
+
+      const barAtual = document.getElementById('bar-custo-atual');
+      const barCSDev = document.getElementById('bar-custo-csdev');
+
+      if (custoAnualSemAutomacao > 0) {
+        document.getElementById('label-custo-atual').innerText = custoAnualSemAutomacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        document.getElementById('label-custo-csdev').innerText = investimento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        barAtual.style.height = '110px';
+        const porcentagem = Math.min(Math.max((investimento / custoAnualSemAutomacao) * 100, 15), 100);
+        barCSDev.style.height = `${porcentagem}%`;
+
+        const economiaPorcentagem = Math.round(((custoAnualSemAutomacao - investimento) / custoAnualSemAutomacao) * 100);
+        document.getElementById('res-porcentagem-economia').innerText = `Economia de ${economiaPorcentagem > 0 ? economiaPorcentagem : 0}%`;
+      }
+    }
+
+    // ==================== INTEGRAÇÃO COM GEMINI API ====================
+    async function enviarMensagemIA() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatBox = document.getElementById('chat-box');
+      const btnSend = document.getElementById('btn-chat-send');
+
+      // Adiciona mensagem do usuário
+      const userDiv = document.createElement('div');
+      userDiv.className = 'bg-blue-900/40 border border-blue-500/30 p-3 rounded-xl text-slate-200 ml-auto max-w-[85%] text-right font-sans';
+      userDiv.innerText = text;
+      chatBox.appendChild(userDiv);
+
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Elemento de resposta da IA
+      const botDiv = document.createElement('div');
+      botDiv.className = 'bg-slate-900 border border-slate-800 p-3 rounded-xl text-slate-300 max-w-[85%] font-sans leading-relaxed';
+      botDiv.innerText = "Pensando...";
+      chatBox.appendChild(botDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      btnSend.disabled = true;
+
+      // Fallback local caso nenhuma chave de API esteja configurada
+      if (!geminiApiKey) {
+        setTimeout(() => {
+          const txtLower = text.toLowerCase();
+          if (txtLower.includes('barbearia')) {
+            botDiv.innerText = "O projeto da Barbearia Danilo é um sistema web responsivo de agendamento em tempo real com integração Supabase: https://barbeariadanilo.netlify.app/";
+          } else if (txtLower.includes('mi prime') || txtLower.includes('loja')) {
+            botDiv.innerText = "A Mi Prime Cell é um catálogo interativo para vendas de smartphones: https://miprimecell.netlify.app/";
+          } else {
+            botDiv.innerText = `Recebi sua mensagem sobre "${text}". Para obter respostas inteligentes com Gemini, configure sua API Key no Painel ADM.`;
+          }
+          btnSend.disabled = false;
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }, 500);
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            system_instruction: {
+              parts: [{ text: SYSTEM_PROMPT }]
             },
-            {
-                id: "financial-recovery-bi",
-                title: "Gestão de Cobrança & Analytics",
-                category: "Dashboard Financial Recovery",
-                type: "bi",
-                description: "Painel executivo com relatórios operacionais para acompanhamento de metas, recuperação financeira e performance em tempo real.",
-                tags: ["Analytics", "Chart.js", "Supabase", "SQL"],
-                icon: "📊",
-                badge: "Operacional",
-                featured: false
-            },
-            {
-                id: "csdev-core-system",
-                title: "CSDEV Core System",
-                category: "SaaS / Web App",
-                type: "web",
-                description: "Arquitetura moderna para sistemas corporativos com suporte a backend resiliente e autenticação via Supabase.",
-                tags: ["Next.js", "Supabase", "Tailwind CSS"],
-                icon: "💻",
-                badge: "Novo",
-                featured: false
-            }
-        ];
-
-        // DATA ARRAY DA BIBLIOTECA DE PRODUTOS
-        const productLibrary = [
-            {
-                id: "prod-ecommerce-1",
-                name: "Loja Virtual Completa",
-                icon: "🛒",
-                category: "ecommerce",
-                price: 2490,
-                description: "E-commerce completo com carrinho, pagamento e painel de gestão."
-            },
-            {
-                id: "prod-landing-1",
-                name: "Página de Conversão",
-                icon: "📄",
-                category: "landing",
-                price: 890,
-                description: "Landing page otimizada para captar leads e vendas rápidas."
-            },
-            {
-                id: "prod-catalogo-1",
-                name: "Catálogo Digital Interativo",
-                icon: "📚",
-                category: "catalogo",
-                price: 590,
-                description: "Catálogo online navegável, com busca e integração ao WhatsApp."
-            }
-        ];
-
-        // Renderização Inicial dos Projetos
-        window.addEventListener('load', () => {
-            const splash = document.getElementById('splash-screen');
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 700);
-            
-            initSignaturePad();
-            renderPortfolioGrid(featuredProjects);
-            renderProductsGrid(productLibrary);
+            contents: [{
+              parts: [{ text: text }]
+            }]
+          })
         });
 
-        // Função de Renderização dos Cards do Portfólio
-        function renderPortfolioGrid(projects) {
-            const grid = document.getElementById('portfolio-grid');
-            grid.innerHTML = projects.map(proj => `
-                <div class="portfolio-item ${proj.type} bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 transition flex flex-col justify-between">
-                    <div>
-                        <div class="h-44 bg-gradient-to-tr from-slate-800 to-indigo-950 flex items-center justify-center text-4xl relative overflow-hidden">
-                            ${proj.image ? `<img src="${proj.image}" alt="${proj.title}" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />` : ''}
-                            <span class="flex items-center justify-center w-full h-full" style="${proj.image ? 'display:none;' : ''}">${proj.icon || '🚀'}</span>
-                            ${proj.badge ? `<span class="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-[10px] font-semibold">${proj.badge}</span>` : ''}
-                        </div>
-                        <div class="p-5">
-                            <span class="text-[10px] font-mono text-indigo-400 uppercase tracking-widest">${proj.category}</span>
-                            <h3 class="font-bold text-white text-base mt-1">${proj.title}</h3>
-                            <p class="text-xs text-slate-400 mt-2 leading-relaxed">${proj.description}</p>
-                            
-                            <div class="flex flex-wrap gap-1.5 mt-4">
-                                ${proj.tags.map(tag => `<span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] text-slate-300 font-mono">${tag}</span>`).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-5 pt-0">
-                        ${proj.liveUrl ? `<a href="${proj.liveUrl}" target="_blank" class="inline-flex items-center gap-1 text-xs font-semibold text-indigo-400 hover:text-indigo-300 hover:underline">Acessar projeto →</a>` : `<span class="text-[10px] text-slate-500 italic">Sistemas de Uso Interno</span>`}
-                    </div>
-                </div>
-            `).join('');
+        const data = await response.json();
+
+        if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+          botDiv.innerText = data.candidates[0].content.parts[0].text;
+        } else {
+          botDiv.innerText = "Erro ao processar a resposta da IA. Verifique se a chave cadastrada é válida.";
         }
+      } catch (err) {
+        console.error(err);
+        botDiv.innerText = "Erro de conexão com a API do Gemini.";
+      } finally {
+        btnSend.disabled = false;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }
 
-        // Filtro do Portfólio
-        function filterPortfolio(category, btn) {
-            const buttons = document.querySelectorAll('.filter-btn');
-            buttons.forEach(b => {
-                b.classList.remove('bg-indigo-600', 'text-white');
-                b.classList.add('bg-slate-800', 'text-slate-300');
-            });
-            btn.classList.remove('bg-slate-800', 'text-slate-300');
-            btn.classList.add('bg-indigo-600', 'text-white');
+    function registrarCliqueLogo() {
+      contadorCliquesLogo++;
+      if (contadorCliquesLogo >= 3) {
+        contadorCliquesLogo = 0;
+        toggleModal('modal-adm');
+      }
+    }
 
-            if (category === 'all') {
-                renderPortfolioGrid(featuredProjects);
-            } else {
-                const filtered = featuredProjects.filter(p => p.type === category);
-                renderPortfolioGrid(filtered);
-            }
-        }
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        toggleModal('modal-adm');
+      }
+    });
 
-        // Cadastro de Novo Projeto dinâmico no Array e Re-renderização
-        function addPortfolioProject(e) {
-            e.preventDefault();
-            const title = document.getElementById('proj-title').value;
-            const category = document.getElementById('proj-category').value;
-            const tagsInput = document.getElementById('proj-tags').value;
-            const url = document.getElementById('proj-url').value;
-            const desc = document.getElementById('proj-desc').value;
+    function toggleModal(id) {
+      document.getElementById(id).classList.toggle('hidden');
+    }
 
-            const tags = tagsInput.split(',').map(t => t.trim()).filter(t => t.length > 0);
+    function autenticarADM(e) {
+      e.preventDefault();
+      const email = document.getElementById('adm-email').value.trim();
+      const senha = document.getElementById('adm-senha').value.trim();
 
-            const newProject = {
-                id: `proj-${Date.now()}`,
-                title: title,
-                category: category === 'web' ? 'Sistema Web / Custom' : 'Analytics & BI',
-                type: category,
-                description: desc,
-                tags: tags.length > 0 ? tags : ["CSDEV", "Custom"],
-                icon: category === 'web' ? '💻' : '📊',
-                liveUrl: url || null,
-                badge: "Novo",
-                featured: false
-            };
+      if (email === GESTOR_EMAIL && senha === GESTOR_SENHA) {
+        document.getElementById('adm-form-login').classList.add('hidden');
+        document.getElementById('adm-dashboard-view').classList.remove('hidden');
+      } else {
+        alert('Credenciais incorretas.');
+      }
+    }
 
-            featuredProjects.unshift(newProject);
-            renderPortfolioGrid(featuredProjects);
+    function fecharDashboardADM() {
+      document.getElementById('adm-form-login').classList.remove('hidden');
+      document.getElementById('adm-dashboard-view').classList.add('hidden');
+      toggleModal('modal-adm');
+    }
 
-            alert('Projeto cadastrado e publicado com sucesso no portfólio!');
-            e.target.reset();
-        }
-
-        // Rótulo amigável da categoria de produto
-        function categoryLabel(cat) {
-            if (cat === 'ecommerce') return 'E-commerce';
-            if (cat === 'landing') return 'Landing Page';
-            return 'Catálogo';
-        }
-
-        // Renderização dos Cards da Biblioteca de Produtos
-        function renderProductsGrid(list) {
-            const grid = document.getElementById('products-grid');
-            if (list.length === 0) {
-                grid.innerHTML = '<p class="text-xs text-slate-500 italic col-span-2">Nenhum produto cadastrado nesta categoria.</p>';
-                return;
-            }
-            grid.innerHTML = list.map(p => `
-                <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-lg shrink-0">${p.icon}</div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-[9px] font-mono uppercase tracking-wider text-indigo-400">${categoryLabel(p.category)}</span>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <button onclick="editProduct('${p.id}')" class="text-slate-500 hover:text-indigo-400 text-xs" aria-label="Editar preço do produto">✎</button>
-                                <button onclick="deleteProduct('${p.id}')" class="text-slate-500 hover:text-rose-400 text-xs" aria-label="Excluir produto">🗑</button>
-                            </div>
-                        </div>
-                        <h5 class="text-xs font-semibold text-white truncate mt-0.5">${p.name}</h5>
-                        <p class="text-[11px] text-slate-400 mt-0.5">${p.description || ''}</p>
-                        <span class="text-xs font-mono text-emerald-400 font-bold mt-1 block">A partir de R$ ${Number(p.price).toLocaleString('pt-BR')}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Filtro por Categoria da Biblioteca de Produtos
-        function filterProducts(category, btn) {
-            const buttons = document.querySelectorAll('.product-filter-btn');
-            buttons.forEach(b => {
-                b.classList.remove('bg-indigo-600', 'text-white');
-                b.classList.add('bg-slate-900', 'border', 'border-slate-700', 'text-slate-300');
-            });
-            btn.classList.remove('bg-slate-900', 'border', 'border-slate-700', 'text-slate-300');
-            btn.classList.add('bg-indigo-600', 'text-white');
-
-            if (category === 'all') {
-                renderProductsGrid(productLibrary);
-            } else {
-                renderProductsGrid(productLibrary.filter(p => p.category === category));
-            }
-        }
-
-        // Cadastro de Novo Produto na Biblioteca
-        function addProduct(e) {
-            e.preventDefault();
-            const name = document.getElementById('prod-name').value;
-            const icon = document.getElementById('prod-icon').value || '🔗';
-            const category = document.getElementById('prod-category').value;
-            const price = parseFloat(document.getElementById('prod-price').value) || 0;
-            const desc = document.getElementById('prod-desc').value;
-
-            productLibrary.unshift({
-                id: `prod-${Date.now()}`,
-                name: name,
-                icon: icon,
-                category: category,
-                price: price,
-                description: desc
-            });
-
-            renderProductsGrid(productLibrary);
-            alert('Produto adicionado à biblioteca!');
-            e.target.reset();
-        }
-
-        // Edição Rápida de Preço do Produto
-        function editProduct(id) {
-            const product = productLibrary.find(p => p.id === id);
-            if (!product) return;
-            const newPrice = prompt('Novo preço "a partir de" (R$):', product.price);
-            if (newPrice === null) return;
-            const parsed = parseFloat(newPrice);
-            if (isNaN(parsed) || parsed < 0) {
-                alert('Preço inválido.');
-                return;
-            }
-            product.price = parsed;
-            renderProductsGrid(productLibrary);
-        }
-
-        // Exclusão de Produto da Biblioteca
-        function deleteProduct(id) {
-            if (!confirm('Deseja remover este produto da biblioteca?')) return;
-            const index = productLibrary.findIndex(p => p.id === id);
-            if (index > -1) productLibrary.splice(index, 1);
-            renderProductsGrid(productLibrary);
-        }
-
-        // Gerenciamento de Módulos e Simulador
-        let selectedModules = [];
-        let totalPrice = 0;
-
-        function toggleModule(name, price, element) {
-            const index = selectedModules.findIndex(m => m.name === name);
-            if (index > -1) {
-                selectedModules.splice(index, 1);
-                element.classList.remove('border-indigo-500', 'bg-indigo-950/30');
-            } else {
-                selectedModules.push({ name, price });
-                element.classList.add('border-indigo-500', 'bg-indigo-950/30');
-            }
-            updateSummary();
-        }
-
-        function updateSummary() {
-            const summaryList = document.getElementById('selected-summary-list');
-            const priceDisplay = document.getElementById('total-price-display');
-            
-            if (selectedModules.length === 0) {
-                summaryList.innerHTML = '<p class="text-xs text-slate-500 italic">Nenhum módulo selecionado ainda.</p>';
-                totalPrice = 0;
-            } else {
-                summaryList.innerHTML = selectedModules.map(m => 
-                    `<div class="flex justify-between items-center text-xs text-slate-200">
-                        <span>• ${m.name}</span>
-                        <span class="font-mono text-indigo-400">R$ ${m.price.toLocaleString('pt-BR')}</span>
-                    </div>`
-                ).join('');
-                totalPrice = selectedModules.reduce((acc, curr) => acc + curr.price, 0);
-            }
-            priceDisplay.textContent = `R$ ${totalPrice.toLocaleString('pt-BR')},00`;
-        }
-
-        // Signature Pad
-        let signaturePad;
-        function initSignaturePad() {
-            const canvas = document.getElementById('signature-canvas');
-            if (canvas) {
-                signaturePad = new SignaturePad(canvas, {
-                    backgroundColor: 'rgba(0, 0, 0, 0)',
-                    penColor: '#818cf8'
-                });
-            }
-        }
-        function clearSignature() {
-            if (signaturePad) signaturePad.clear();
-        }
-
-        // Calculadora de ROI
-        function calculateROI() {
-            const employees = parseFloat(document.getElementById('roi-employees').value) || 0;
-            const hours = parseFloat(document.getElementById('roi-hours').value) || 0;
-            const rate = parseFloat(document.getElementById('roi-hourly-rate').value) || 0;
-
-            const dailyHoursSaved = employees * hours;
-            const annualHoursSaved = dailyHoursSaved * 20 * 12;
-            const annualSavings = annualHoursSaved * rate;
-
-            document.getElementById('roi-annual-savings').textContent = `R$ ${annualSavings.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-            document.getElementById('roi-hours-saved').textContent = `${annualHoursSaved.toLocaleString('pt-BR')} horas`;
-        }
-
-        // Modal PIX
-        function openPixModal() {
-            if (totalPrice === 0) {
-                alert('Por favor, selecione ao menos um módulo no simulador.');
-                return;
-            }
-            const modal = document.getElementById('pix-modal');
-            const qrcodeContainer = document.getElementById('qrcode-container');
-            qrcodeContainer.innerHTML = '';
-            
-            new QRCode(qrcodeContainer, {
-                text: `PIX-CSDEV-PROJETO-SINAL-${totalPrice * 0.5}`,
-                width: 128,
-                height: 128
-            });
-
-            modal.classList.remove('hidden');
-        }
-        function closePixModal() {
-            document.getElementById('pix-modal').classList.add('hidden');
-        }
-        function copyPixCode() {
-            navigator.clipboard.writeText(`00020126360014BR.GOV.BCB.PIX0114+5561900000000520400005303986540${(totalPrice * 0.5).toFixed(2)}5802BR5905CSDEV6008BRASILIA62070503***6304`);
-            alert('Código PIX Copia e Cola copiado para a área de transferência!');
-        }
-        function confirmPixPayment() {
-            alert('Notificação enviada! Validaremos seu pagamento em instantes.');
-            closePixModal();
-        }
-
-        // Modal Agendamento
-        function openScheduleModal() {
-            document.getElementById('schedule-modal').classList.remove('hidden');
-        }
-        function closeScheduleModal() {
-            document.getElementById('schedule-modal').classList.add('hidden');
-        }
-        function handleScheduleSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('sched-name').value;
-            const date = document.getElementById('sched-date').value;
-            const time = document.getElementById('sched-time').value;
-            
-            const msg = `Olá Isabella! Gostaria de agendar uma reunião comercial para a empresa/cliente: ${name} no dia ${date} às ${time}.`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-            closeScheduleModal();
-        }
-
-        // Modal Auth & Dashboard Gestor
-        function toggleAuthModal() {
-            const modal = document.getElementById('auth-modal');
-            modal.classList.toggle('hidden');
-        }
-        function enterAsCeo() {
-            document.getElementById('auth-logged-out').classList.add('hidden');
-            document.getElementById('auth-logged-in').classList.remove('hidden');
-            initCharts();
-        }
-        function logoutUser() {
-            document.getElementById('auth-logged-in').classList.add('hidden');
-            document.getElementById('auth-logged-out').classList.remove('hidden');
-        }
-        function handleAuthSubmit(e) {
-            e.preventDefault();
-            enterAsCeo();
-        }
-
-        // Renderização dos Gráficos via Chart.js
-        let chartsInitialized = false;
-        function initCharts() {
-            if (chartsInitialized) return;
-            chartsInitialized = true;
-
-            const ctxPipeline = document.getElementById('chart-pipeline').getContext('2d');
-            new Chart(ctxPipeline, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-                    datasets: [{
-                        label: 'Propostas Fechadas (R$k)',
-                        data: [12, 19, 15, 25, 22, 30],
-                        backgroundColor: '#6366f1'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } },
-                    scales: {
-                        x: { ticks: { color: '#94a3b8' } },
-                        y: { ticks: { color: '#94a3b8' } }
-                    }
-                }
-            });
-
-            const ctxConversions = document.getElementById('chart-conversions').getContext('2d');
-            new Chart(ctxConversions, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Sistemas Web', 'Dashboards BI', 'Automações'],
-                    datasets: [{
-                        data: [45, 30, 25],
-                        backgroundColor: ['#4f46e5', '#10b981', '#a855f7']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } }
-                }
-            });
-        }
-
-        // Envio de Orçamentos via WhatsApp
-        function sendBudgetToWhatsapp() {
-            const text = encodeURIComponent("Olá Cleiton! Acessei o site da CSDEV e gostaria de solicitar uma análise técnica de projeto.");
-            window.open(`https://wa.me/?text=${text}`, '_blank');
-        }
-        function sendBudgetToIsabella() {
-            let selectedText = selectedModules.map(m => `- ${m.name} (R$ ${m.price})`).join('\n');
-            const text = encodeURIComponent(`Olá Isabella! Gostaria de cotar o seguinte pacote comercial:\n${selectedText}\nTotal Estimado: R$ ${totalPrice},00`);
-            window.open(`https://wa.me/?text=${text}`, '_blank');
-        }
-
-        // Geração de PDF Assinado
-        function generateProposalPDF() {
-            if (selectedModules.length === 0) {
-                alert('Selecione ao menos um módulo para gerar a proposta em PDF.');
-                return;
-            }
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(18);
-            doc.text('CSDEV - Proposta Comercial & ESPECIFICAÇÃO', 20, 20);
-
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, 20, 30);
-
-            doc.text('Módulos Selecionados:', 20, 45);
-            let y = 55;
-            selectedModules.forEach(m => {
-                doc.text(`- ${m.name}: R$ ${m.price.toLocaleString('pt-BR')},00`, 25, y);
-                y += 10;
-            });
-
-            doc.setFont('helvetica', 'bold');
-            doc.text(`Investimento Total: R$ ${totalPrice.toLocaleString('pt-BR')},00`, 20, y + 10);
-
-            if (signaturePad && !signaturePad.isEmpty()) {
-                const sigData = signaturePad.toDataURL();
-                doc.text('Assinatura do Cliente:', 20, y + 30);
-                doc.addImage(sigData, 'PNG', 20, y + 35, 60, 25);
-            }
-
-            doc.save('Proposta_CSDEV.pdf');
-        }
-    </script>
+    function confirmarAgendamento(e) {
+      e.preventDefault();
+      alert('Solicitação recebida! Entraremos em contato em breve.');
+      toggleModal('modal-agendamento');
+    }
+  </script>
 </body>
 </html>

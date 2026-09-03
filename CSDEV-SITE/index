@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Gestão - Cobrança & Financeiro</title>
+    <!-- Tailwind CSS CDN para estilização rápida e moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+    <!-- Layout Principal -->
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar / Menu Lateral -->
+        <aside class="w-64 bg-slate-900 text-white flex flex-col justify-between p-4">
+            <div>
+                <div class="flex items-center space-x-3 mb-8 p-2">
+                    <i class="fa-solid fa-chart-line text-blue-500 text-2xl"></i>
+                    <span class="text-xl font-bold tracking-wide">CS DEV Gestão</span>
+                </div>
+
+                <nav class="space-y-2">
+                    <button onclick="switchTab('cobranca')" id="btn-cobranca" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg bg-blue-600 text-white transition">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                        <span>Equipe Cobrança</span>
+                    </button>
+                    <button onclick="switchTab('financeiro')" id="btn-financeiro" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 transition">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                        <span>Equipe Financeiro</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div class="text-xs text-gray-500 text-center border-t border-slate-800 pt-4">
+                Plataforma Interna v1.0
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="flex-1 overflow-y-auto p-8">
+            
+            <!-- MÓDULO DE COBRANÇA -->
+            <section id="sec-cobranca" class="space-y-6">
+                <header class="flex justify-between items-center pb-4 border-b">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Dashboard — Setor de Cobrança</h1>
+                        <p class="text-sm text-gray-500">Lançamento e acompanhamento de metas diárias de recuperação</p>
+                    </div>
+                </header>
+
+                <!-- Formulário Cobrança -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-lg font-semibold mb-4 text-gray-700">Novo Lançamento Diário</h2>
+                    <form id="form-cobranca" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Colaborador</label>
+                            <input type="text" placeholder="Nome do colaborador" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Novas Cobranças</label>
+                            <input type="number" placeholder="Qtd efetuada" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Retornos Novas</label>
+                            <input type="number" placeholder="Qtd retornos" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Retornos Etapa 2</label>
+                            <input type="number" class="w-full p-2 border rounded-lg outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Retornos Etapa 3</label>
+                            <input type="number" class="w-full p-2 border rounded-lg outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Retornos Etapa 4 / 5</label>
+                            <input type="number" class="w-full p-2 border rounded-lg outline-none">
+                        </div>
+                        <div class="md:col-span-3 flex justify-end">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition">Registrar Produtividade</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- MÓDULO DE FINANCEIRO -->
+            <section id="sec-financeiro" class="space-y-6 hidden">
+                <header class="flex justify-between items-center pb-4 border-b">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Dashboard — Setor Financeiro</h1>
+                        <p class="text-sm text-gray-500">Métricas de atendimento OPA, ligações e demandas operacionais</p>
+                    </div>
+                </header>
+
+                <!-- Formulário Financeiro -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-lg font-semibold mb-4 text-gray-700">Lançamento de Atendimentos</h2>
+                    <form id="form-financeiro" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Colaborador</label>
+                            <input type="text" placeholder="Nome" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Atendimentos OPA</label>
+                            <input type="number" class="w-full p-2 border rounded-lg outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Atendimentos Ligação</label>
+                            <input type="number" class="w-full p-2 border rounded-lg outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Demanda Cartão</label>
+                            <input type="number" class="w-full p-2 border rounded-lg outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Demanda Vencimentos</label>
+                            <input type="number" class="w-full p-2 border rounded-lg outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Dia de Bloqueio (Sim/Não ou Qtd)</label>
+                            <input type="text" class="w-full p-2 border rounded-lg outline-none">
+                        </div>
+                        <div class="md:col-span-3 flex justify-end">
+                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-2 rounded-lg transition">Salvar Registro</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Script de Troca de Abas -->
+    <script>
+        function switchTab(tab) {
+            const cobrancaSec = document.getElementById('sec-cobranca');
+            const financeiroSec = document.getElementById('sec-financeiro');
+            const btnCobranca = document.getElementById('btn-cobranca');
+            const btnFinanceiro = document.getElementById('btn-financeiro');
+
+            if (tab === 'cobranca') {
+                cobrancaSec.classList.remove('hidden');
+                financeiroSec.classList.add('hidden');
+                btnCobranca.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg bg-blue-600 text-white transition";
+                btnFinanceiro.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 transition";
+            } else {
+                financeiroSec.classList.remove('hidden');
+                cobrancaSec.classList.add('hidden');
+                btnFinanceiro.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg bg-emerald-600 text-white transition";
+                btnCobranca.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 transition";
+            }
+        }
+    </script>
+</body>
+</html>
